@@ -1,52 +1,64 @@
 import streamlit as st
-
-# Set the title of the app
-st.title("My Streamlit App")
-
-# Add a subtitle
-st.subheader("Welcome to my first Streamlit app!")
-
-# Add some text
-st.write("This is a simple example to demonstrate Streamlit's features.")
-
-# Create an input widget (text input)
-name = st.text_input("Enter your name:")
-
-# Create a slider widget
-age = st.slider("Select your age:", 0, 100, 25)
-
-# Display the input data
-st.write(f"Hello, {name}! You are {age} years old.")
-
-# Add a button
-if st.button("Click Me"):
-    st.write("Button clicked!")
-
-# Add an image (optional, if you have an image file)
-# st.image("path/to/your/image.png", caption="Sample Image")
-
-# Add a data table (using Pandas DataFrame)
 import pandas as pd
 
-data = {
-    "Name": ["Alice", "Bob", "Charlie", "David"],
-    "Age": [24, 30, 22, 29],
-    "City": ["New York", "Los Angeles", "Chicago", "Houston"]
-}
+# Set the title of the app
+st.title("Student Grade Calculator")
 
-df = pd.DataFrame(data)
+# Introduction
+st.write("""
+This app calculates your final course grade based on the weights of different components like homework, projects, midterms, and finals.
+""")
 
-st.write("Here's a sample data table:")
-st.dataframe(df)
+# Define possible components
+possible_components = ["Homework", "Projects", "Midterm Exams", "Final Exams"]
 
-# Add a line chart (using Pandas DataFrame)
-st.write("Here's a sample line chart:")
-chart_data = pd.DataFrame(
-    data={
-        "First": [1, 2, 3, 4],
-        "Second": [10, 20, 30, 40],
-        "Third": [100, 200, 300, 400]
-    }
+# Input the components
+selected_components = st.multiselect(
+    "Select the components for your course",
+    options=possible_components,
+    default=["Homework", "Midterm Exams", "Final Exams"]
 )
 
-st.line_chart(chart_data)
+# Initialize lists to store component weights and scores
+component_weights = []
+component_scores = []
+
+# Loop through to get details for each selected component
+for component in selected_components:
+    st.subheader(f"{component}")
+
+    # Input for component weight
+    component_weight = st.slider(f"Weight of {component} (%)", min_value=0, max_value=100, value=25)
+    component_weights.append(component_weight)
+    
+    # Input for component score
+    component_score = st.slider(f"Score in {component} (%)", min_value=0, max_value=100, value=75)
+    component_scores.append(component_score)
+
+# Calculate final grade
+total_weight = sum(component_weights)
+final_grade = sum([(component_weights[i] * component_scores[i]) for i in range(len(selected_components))]) / total_weight
+
+# Display the final grade
+st.subheader("Your Final Grade")
+st.write(f"Based on the components you entered, your final grade is **{final_grade:.2f}%**.")
+
+# Determine the letter grade
+if final_grade >= 93:
+    st.success("You received an **A** in the course! Excellent work!")
+elif final_grade >= 85:
+    st.success("You received a **B** in the course. Good job!")
+elif final_grade >= 75:
+    st.warning("You received a **C** in the course. You passed!")
+else:
+    st.error("You received a **D** or **F** in the course. You may need to retake this course.")
+
+# Optional: Display a summary of inputs
+st.subheader("Summary of Inputs")
+summary_data = {
+    "Component": selected_components,
+    "Weight (%)": component_weights,
+    "Score (%)": component_scores
+}
+summary_df = pd.DataFrame(summary_data)
+st.dataframe(summary_df)
