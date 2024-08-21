@@ -32,7 +32,7 @@ for component in selected_components:
     component_weights.append(component_weight)
     
     # Input for component score
-    component_score = st.slider(f"Score in {component} (%)", min_value=0, max_value=100, value=75)
+    component_score = st.slider(f"Score in {component} ", min_value=0, max_value=100, value=75)
     component_scores.append(component_score)
 
 # Calculate final grade
@@ -58,7 +58,7 @@ st.subheader("Summary of Inputs")
 summary_data = {
     "Component": selected_components,
     "Weight (%)": component_weights,
-    "Score (%)": component_scores
+    "Score ": component_scores
 }
 summary_df = pd.DataFrame(summary_data)
 st.dataframe(summary_df)
